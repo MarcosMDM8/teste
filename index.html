@@ -28,7 +28,7 @@
 
         // Função para enviar dados para o Google Apps Script via POST
         document.getElementById('contactForm').addEventListener('submit', function (event) {
-            event.preventDefault();
+            event.preventDefault(); // Impede o envio padrão do formulário (recarregar a página)
 
             const nome = document.getElementById('nome').value;
             const email = document.getElementById('email').value;
@@ -40,6 +40,9 @@
                 mensagem: mensagem
             };
 
+            // Exibindo um alerta para ver se os dados estão sendo capturados
+            alert(`Dados capturados:\nNome: ${nome}\nEmail: ${email}\nMensagem: ${mensagem}`);
+
             fetch(apiUrl, {
                 method: 'POST',
                 headers: {
@@ -49,10 +52,13 @@
             })
             .then(response => response.text())
             .then(result => {
-                alert(result); // Exibe uma mensagem de sucesso ou erro
+                alert(result); // Exibe a mensagem retornada do Google Apps Script
                 fetchData(); // Atualiza os dados exibidos após o envio
             })
-            .catch(error => console.error('Erro ao enviar dados:', error));
+            .catch(error => {
+                console.error('Erro ao enviar dados:', error);
+                alert('Erro ao enviar dados!');
+            });
         });
 
         // Função para buscar dados da planilha via GET e exibir no site
@@ -69,7 +75,10 @@
                         dataList.appendChild(li);
                     });
                 })
-                .catch(error => console.error('Erro ao buscar dados:', error));
+                .catch(error => {
+                    console.error('Erro ao buscar dados:', error);
+                    alert('Erro ao buscar dados!');
+                });
         }
 
         // Carregar os dados ao carregar a página
