@@ -1,122 +1,76 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Formulário Simples - Google Sheets API</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    h1 {
-      color: #333;
-    }
-    form {
-      margin-bottom: 20px;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-    }
-    button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #45a049;
-    }
-    #data-container {
-      margin-top: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Teste de Formulário com Google Sheets</title>
 </head>
 <body>
+    <h1>Formulário de Contato</h1>
+    <form id="contactForm">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required><br><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required><br><br>
+        <label for="mensagem">Mensagem:</label><br>
+        <textarea id="mensagem" name="mensagem" required></textarea><br><br>
+        <button type="submit">Enviar</button>
+    </form>
 
-  <h1>Envie seus dados para a planilha</h1>
-  
-  <!-- Formulário simples para enviar dados -->
-  <form id="dataForm">
-    <label for="nome">Nome:</label>
-    <input type="text" id="nome" name="nome" required><br>
+    <h2>Dados Enviados:</h2>
+    <ul id="dataList"></ul>
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required><br>
+    <script>
+        const apiUrl = 'https://script.google.com/macros/s/AKfycbwAKDZPlrUiKZ6pRlNq0XvJYwL74AsE8-W8W3R_1LiIHB3CKEFLIcturas4rPzOeKDZ5A/exec'; // Substitua pela URL gerada do seu Web App
 
-    <label for="mensagem">Mensagem:</label>
-    <textarea id="mensagem" name="mensagem" required></textarea><br>
+        // Função para enviar dados para o Google Apps Script via POST
+        document.getElementById('contactForm').addEventListener('submit', function (event) {
+            event.preventDefault();
 
-    <button type="submit">Enviar Dados</button>
-  </form>
+            const nome = document.getElementById('nome').value;
+            const email = document.getElementById('email').value;
+            const mensagem = document.getElementById('mensagem').value;
 
-  <h2>Dados Enviados:</h2>
-  <div id="data-container">
-    <!-- Os dados da planilha serão carregados aqui -->
-  </div>
+            const data = {
+                nome: nome,
+                email: email,
+                mensagem: mensagem
+            };
 
-  <script>
-    // URL da sua API gerada pelo Google Apps Script
-    const apiUrl = 'https://script.google.com/macros/s/AKfycbzjC8bUKlOL2X-o9JjZgGFDo9eYRanU08fut6GL5FcokjWCIpoNaVEzCjCYtNama4tQYw/exec'; // Substituída pela sua URL gerada no Apps Script
-
-    // Função para buscar e exibir os dados da planilha
-    async function fetchData() {
-      try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        displayData(data);
-      } catch (error) {
-        console.error('Erro ao buscar dados:', error);
-      }
-    }
-
-    // Função para exibir os dados no site
-    function displayData(data) {
-      const container = document.getElementById('data-container');
-      container.innerHTML = ''; // Limpar conteúdo anterior
-
-      // Exibir cada linha de dados
-      data.forEach(row => {
-        const div = document.createElement('div');
-        div.innerHTML = `<strong>${row.nome}</strong> (${row.email}): ${row.mensagem}`;
-        container.appendChild(div);
-      });
-    }
-
-    // Função para enviar dados via POST
-    document.getElementById('dataForm').addEventListener('submit', async function(event) {
-      event.preventDefault();
-
-      const nome = document.getElementById('nome').value;
-      const email = document.getElementById('email').value;
-      const mensagem = document.getElementById('mensagem').value;
-
-      const data = { nome, email, mensagem };
-
-      try {
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.text())
+            .then(result => {
+                alert(result); // Exibe uma mensagem de sucesso ou erro
+                fetchData(); // Atualiza os dados exibidos após o envio
+            })
+            .catch(error => console.error('Erro ao enviar dados:', error));
         });
 
-        const result = await response.text();
-        alert(result); // Mensagem de sucesso
-        fetchData(); // Atualizar os dados exibidos
-      } catch (error) {
-        console.error('Erro ao enviar dados:', error);
-      }
-    });
+        // Função para buscar dados da planilha via GET e exibir no site
+        function fetchData() {
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const dataList = document.getElementById('dataList');
+                    dataList.innerHTML = ''; // Limpa a lista antes de adicionar os novos itens
 
-    // Chamar fetchData para carregar os dados da planilha ao carregar a página
-    fetchData();
-  </script>
+                    data.forEach(item => {
+                        const li = document.createElement('li');
+                        li.textContent = `Nome: ${item.nome}, Email: ${item.email}, Mensagem: ${item.mensagem}`;
+                        dataList.appendChild(li);
+                    });
+                })
+                .catch(error => console.error('Erro ao buscar dados:', error));
+        }
 
+        // Carregar os dados ao carregar a página
+        window.onload = fetchData;
+    </script>
 </body>
 </html>
+  
