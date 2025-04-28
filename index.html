@@ -2,17 +2,21 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Teste de Formulário com Google Sheets</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Contato</title>
 </head>
 <body>
     <h1>Formulário de Contato</h1>
     <form id="contactForm">
         <label for="nome">Nome:</label>
         <input type="text" id="nome" name="nome" required><br><br>
+
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required><br><br>
+
         <label for="mensagem">Mensagem:</label><br>
         <textarea id="mensagem" name="mensagem" required></textarea><br><br>
+
         <button type="submit">Enviar</button>
     </form>
 
@@ -20,7 +24,7 @@
     <ul id="dataList"></ul>
 
     <script>
-        const apiUrl = 'https://script.google.com/macros/s/AKfycbwAKDZPlrUiKZ6pRlNq0XvJYwL74AsE8-W8W3R_1LiIHB3CKEFLIcturas4rPzOeKDZ5A/exec'; // Substitua pela URL gerada do seu Web App
+        const apiUrl = 'https://script.google.com/macros/s/AKfycbwAKDZPlrUiKZ6pRlNq0XvJYwL74AsE8-W8W3R_1LiIHB3CKEFLIcturas4rPzOeKDZ5A/exec'; // Substitua pela URL gerada no seu Web App
 
         // Função para enviar dados para o Google Apps Script via POST
         document.getElementById('contactForm').addEventListener('submit', function (event) {
@@ -73,4 +77,3 @@
     </script>
 </body>
 </html>
-  
